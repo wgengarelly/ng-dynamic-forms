@@ -11,6 +11,7 @@
                      (focus)="onFocus($event)">
 
         <mat-radio-button *ngFor="let option of model.options$ | async"
+                          [color]="model.getAdditional('color', 'accent')"
                           [name]="model.name"
                           [ngClass]="getClass('element', 'option')"
                           [value]="option.value"><span [innerHTML]="option.label"></span></mat-radio-button>

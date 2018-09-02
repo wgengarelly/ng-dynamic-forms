@@ -224,6 +224,9 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
     new DynamicRadioGroupModel<string>({
 
         id: "payment",
+        additional: {
+            color: "primary"
+        },
         options: [
             {
                 label: "Credit Card",
@@ -265,8 +268,10 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
         id: "reminder",
         offLabel: "Send me a reminder",
         onLabel: "Send me a reminder",
-        value: false
-
+        value: false,
+        additional: {
+            color: "primary"
+        }
     }),
 
     new DynamicSwitchModel({
@@ -274,12 +279,17 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
         id: "newsletter",
         offLabel: "Subscribe to newsletter",
         onLabel: "Subscribe to newsletter",
-        value: true
+        value: true,
+        additional: {
+            color: "primary"
+        }
     }),
 
     new DynamicCheckboxModel({
-
         id: "confirm",
-        label: "I confirm the information given above"
+        label: "I confirm the information given above",
+        additional: {
+            color: "primary"
+        }
     })
 ];
