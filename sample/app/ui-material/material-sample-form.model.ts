@@ -252,6 +252,7 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
 
         id: "note",
         rows: 3,
+        maxLength: 100,
         placeholder: "Personal Note"
     }),
 
