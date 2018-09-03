@@ -1,8 +1,9 @@
-# 6.0.11 [Fork]
+# 6.1.0 [Fork]
 
 ### **Features**
 
 - `color` property added to `DynamicMaterialRadioGroupComponent`
+- only show max length hint when the character count is close to the max length
 
 # 6.0.10
 
