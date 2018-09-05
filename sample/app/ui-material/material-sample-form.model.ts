@@ -23,6 +23,14 @@ export const STATES_AUTOCOMPLETE_LIST = [
 
 export const MATERIAL_SAMPLE_FORM_MODEL = [
 
+    new DynamicCheckboxModel({
+        id: "dynamicStuff",
+        label: "Dynamic Stuff",
+        additional: {
+            color: "primary"
+        }
+    }),
+
     new DynamicFormGroupModel({
 
         id: "stay",
@@ -82,7 +90,7 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
             }),
 
             new DynamicInputModel({
-
+                hidden: true,
                 id: "roomQuantity",
                 inputType: "number",
                 placeholder: "Room Quantity",
@@ -103,7 +111,19 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
         },
         errorMessages: {
             required: "Field is required"
-        }
+        },
+        relation: [
+            {
+                action: "DISABLE",
+                when: [
+                    {
+                        id: "dynamicStuff",
+                        operator: "===",
+                        value: true
+                    }
+                ]
+            }
+        ]
     }),
 
     new DynamicInputModel({
@@ -119,19 +139,44 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
         },
         additional: {
             color: "accent"
-        }
+        },
+        relation: [
+            {
+                action: "DISABLE",
+                when: [
+                    {
+                        id: "dynamicStuff",
+                        operator: "===",
+                        value: false
+                    }
+                ]
+            }
+        ]
     }),
 
     new DynamicInputModel({
 
         id: "email",
         placeholder: "E-Mail",
+        hidden: true,
         validators: {
             email: null
         },
         errorMessages: {
             email: "Field has no valid email"
-        }
+        },
+        relation: [
+            {
+                action: "HIDDEN",
+                when: [
+                    {
+                        id: "dynamicStuff",
+                        operator: "===",
+                        value: true
+                    }
+                ]
+            }
+        ]
     }),
 
     new DynamicInputModel({
@@ -146,7 +191,19 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
         },
         errorMessages: {
             required: "Field is required"
-        }
+        },
+        relation: [
+            {
+                action: "VISIBLE",
+                when: [
+                    {
+                        id: "dynamicStuff",
+                        operator: "===",
+                        value: true
+                    }
+                ]
+            }
+        ]
     }),
 
     new DynamicFormGroupModel({
