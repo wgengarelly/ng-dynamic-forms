@@ -2,6 +2,7 @@
 
 ### **Features**
 
+- HIDDEN and VISIBLE relationship rules added
 - `color` property added to `DynamicMaterialRadioGroupComponent`
 - only show max length hint when the character count is close to the max length
 

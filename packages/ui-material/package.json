@@ -1,6 +1,6 @@
 {
   "name": "@ng-dynamic-forms/ui-material",
-  "version": "6.1.0-alpha.2",
+  "version": "6.1.0",
   "description": "Material UI package for NG Dynamic Forms",
   "keywords": [
     "angular",
