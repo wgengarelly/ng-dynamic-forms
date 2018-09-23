@@ -6,7 +6,8 @@ import {
     DynamicRadioGroupModel,
     DynamicSelectModel,
     DynamicSwitchModel,
-    DynamicTextAreaModel
+    DynamicTextAreaModel,
+    DynamicFormArrayModel
 } from "@ng-dynamic-forms/core";
 import { BehaviorSubject } from "rxjs";
 
@@ -29,6 +30,34 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
         additional: {
             color: "primary"
         }
+    }),
+
+    new DynamicFormArrayModel({
+        id: "sampleArray",
+        initialCount: 3,
+        groupFactory: () => [
+            new DynamicRadioGroupModel<string>({
+                id: "duck",
+                additional: {
+                    color: "primary"
+                },
+                options: [
+                    {
+                        label: "Huey",
+                        value: "huey"
+                    },
+                    {
+                        label: "Dewey",
+                        value: "dewey"
+                    },
+                    {
+                        label: "Louie",
+                        value: "louie"
+                    }
+                ],
+                value: "cc"
+            })
+        ]
     }),
 
     new DynamicFormGroupModel({

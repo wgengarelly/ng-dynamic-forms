@@ -4,7 +4,7 @@
                      [formControlName]="model.id"
                      [id]="bindId ? model.id : null"
                      [labelPosition]="model.getAdditional('labelPosition', 'after')"
-                     [name]="model.name"
+
                      [ngClass]="[getClass('element', 'control'), getClass('grid', 'control')]"
                      (blur)="onBlur($event)"
                      (change)="onChange($event)"
