@@ -1,3 +1,13 @@
+# To Sync with Original:
+
+https://help.github.com/articles/syncing-a-fork/
+
+1. git fetch upstream
+1. git checkout master
+1. git merge upstream/master
+1. Handle any conflicts
+1. git push
+
 # Overrides:
 
 ## packages > ui-material >> dynamic-material-form-input-control.component.ts
