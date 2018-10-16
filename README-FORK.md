@@ -1,4 +1,4 @@
-# To Sync with Original:
+# To Sync with Original
 
 https://help.github.com/articles/syncing-a-fork/
 
@@ -8,7 +8,56 @@ https://help.github.com/articles/syncing-a-fork/
 1. Handle any conflicts
 1. git push
 
-# Overrides:
+# Build and Modify Version
+1. Build the packages
+    ```
+    npm run build:packages
+    ```
+1. Add the forked suffix to the versions in the dist folder.
+(This is currently a manual task.)
+
+    For example in dist\@ng-dynamic-forms\core\package.json:
+    `"version": "6.2.0-forked.1"`
+
+1. Also add the suffix to the peer dependencies.
+(This is currently a manual task.)
+
+    For example in dist\@ng-dynamic-forms\ui-material\package.json:
+    `"@ng-dynamic-forms/core": "^6.2.0-forked.1",`
+
+
+# Publish to local npm (Verdaccio)
+Your can have a local npm registry in Verdaccio and run it in Docker with
+the following `docker.componse.yaml` file.
+
+```
+version: '2.1'
+services:
+  verdaccio:
+    image: verdaccio/verdaccio
+    container_name: local-npm-verdaccio
+    ports:
+      - "4873:4873"
+    volumes:
+        - "./storage:/verdaccio/storage"
+        - "./conf:/verdaccio/conf"
+        - "./plugins:/verdaccio/plugins"
+volumes:
+  verdaccio:
+    driver: local
+```
+
+1. Start the `verdaccio/verdaccio` docker container.
+1. `cd` to the correct dist folder. For example:
+    ```
+    cd .\dist\@ng-dynamic-forms\core
+    ```
+1. Publish to the local container.
+    ```
+    npm publish --registry http://localhost:4873
+    ```
+
+# List of Overrides in the Fork:
 
 ## packages > ui-material >> dynamic-material-form-input-control.component.ts
 - Changed `showCharacterHint` to hide hint unless character count is > 75% of the max length.
