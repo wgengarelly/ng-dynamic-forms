@@ -9,7 +9,7 @@ https://help.github.com/articles/syncing-a-fork/
 1. git push
 
 # Build and Modify Version
-1. Build the packages
+1. Build the packages. **You may need to run your console as administrator and/or close your dev editor to avoid npm unlinking problems.**
     ```
     npm run build:packages
     ```
@@ -28,7 +28,7 @@ https://help.github.com/articles/syncing-a-fork/
 
 # Publish to local npm (Verdaccio)
 Your can have a local npm registry in Verdaccio and run it in Docker with
-the following `docker.componse.yaml` file.
+the following `docker.componse.yaml` file. I'm just running it in a local `DockerSandbox` folder.
 
 ```
 version: '2.1'
@@ -72,7 +72,36 @@ volumes:
 ## packages > core >> utils > relation.utils.ts
 - Significant changes to support HIDDEN / VISIBLE relations. See code below.
 
-#### Begin new relation.utils.ts
+#### Begin new core/src/service/dynamic-form-control-relation.model.ts
+```
+export const DYNAMIC_FORM_CONTROL_ACTION_DISABLE = "DISABLE";
+export const DYNAMIC_FORM_CONTROL_ACTION_ENABLE = "ENABLE";
+export const DYNAMIC_FORM_CONTROL_ACTION_VISIBLE = "VISIBLE";
+export const DYNAMIC_FORM_CONTROL_ACTION_HIDDEN = "HIDDEN";
+export const DYNAMIC_FORM_CONTROL_ACTION_HIDDEN_DISABLE = "HIDDEN_DISABLE";
+export const DYNAMIC_FORM_CONTROL_ACTION_VISIBLE_ENABLE = "VISIBLE_ENABLE";
+
+export const DYNAMIC_FORM_CONTROL_CONNECTIVE_AND = "AND";
+export const DYNAMIC_FORM_CONTROL_CONNECTIVE_OR = "OR";
+
+export interface DynamicFormControlRelation {
+
+    id: string;
+    operator?: string;
+    status?: string;
+    value?: any;
+}
+
+export interface DynamicFormControlRelationGroup {
+
+    action: string;
+    connective?: string;
+    when: DynamicFormControlRelation[];
+}
+```
+#### End new core/src/service/dynamic-form-control-relation.model.ts
+
+#### Begin new core/src/utils/relation.utils.ts
 ```
 import { FormGroup, FormControl, FormArray, AbstractControl } from "@angular/forms";
 import { DynamicFormControlModel } from "../model/dynamic-form-control.model";
@@ -83,6 +112,8 @@ import {
     DYNAMIC_FORM_CONTROL_ACTION_ENABLE,
     DYNAMIC_FORM_CONTROL_ACTION_HIDDEN,
     DYNAMIC_FORM_CONTROL_ACTION_VISIBLE,
+    DYNAMIC_FORM_CONTROL_ACTION_HIDDEN_DISABLE,
+    DYNAMIC_FORM_CONTROL_ACTION_VISIBLE_ENABLE,
     DYNAMIC_FORM_CONTROL_CONNECTIVE_AND,
     DYNAMIC_FORM_CONTROL_CONNECTIVE_OR
 } from "../model/misc/dynamic-form-control-relation.model";
@@ -101,6 +132,7 @@ export class RelationUtils {
         switch (action) {
             case DYNAMIC_FORM_CONTROL_ACTION_ENABLE:
             case DYNAMIC_FORM_CONTROL_ACTION_VISIBLE:
+            case DYNAMIC_FORM_CONTROL_ACTION_VISIBLE_ENABLE:
                 return true;
             default:
                 return false;
@@ -112,7 +144,9 @@ export class RelationUtils {
             return rel.action === DYNAMIC_FORM_CONTROL_ACTION_DISABLE ||
                 rel.action === DYNAMIC_FORM_CONTROL_ACTION_ENABLE ||
                 rel.action === DYNAMIC_FORM_CONTROL_ACTION_HIDDEN ||
-                rel.action === DYNAMIC_FORM_CONTROL_ACTION_VISIBLE;
+                rel.action === DYNAMIC_FORM_CONTROL_ACTION_VISIBLE ||
+                rel.action === DYNAMIC_FORM_CONTROL_ACTION_HIDDEN_DISABLE ||
+                rel.action === DYNAMIC_FORM_CONTROL_ACTION_VISIBLE_ENABLE;
         });
 
         return rel !== undefined ? rel : null;
@@ -241,8 +275,13 @@ export class RelationUtils {
         }
         return RelationUtils.isActionTriggered(relGroup, _formGroup);
     }
+
+    static isFormControlToBeHiddenAndDisabled(relGroup: DynamicFormControlRelationGroup, _formGroup: FormGroup): boolean {
+        if (relGroup.action !== DYNAMIC_FORM_CONTROL_ACTION_HIDDEN_DISABLE && relGroup.action !== DYNAMIC_FORM_CONTROL_ACTION_VISIBLE_ENABLE) {
+            return false;
+        }
+        return RelationUtils.isActionTriggered(relGroup, _formGroup);
+    }
 }
 ```
-#### End new relation.utils.ts
-
-
+#### End new core/src/utils/relation.utils.ts

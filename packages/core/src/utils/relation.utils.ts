@@ -7,6 +7,8 @@ import {
     DYNAMIC_FORM_CONTROL_ACTION_ENABLE,
     DYNAMIC_FORM_CONTROL_ACTION_HIDDEN,
     DYNAMIC_FORM_CONTROL_ACTION_VISIBLE,
+    DYNAMIC_FORM_CONTROL_ACTION_HIDDEN_DISABLE,
+    DYNAMIC_FORM_CONTROL_ACTION_VISIBLE_ENABLE,
     DYNAMIC_FORM_CONTROL_CONNECTIVE_AND,
     DYNAMIC_FORM_CONTROL_CONNECTIVE_OR
 } from "../model/misc/dynamic-form-control-relation.model";
@@ -25,6 +27,7 @@ export class RelationUtils {
         switch (action) {
             case DYNAMIC_FORM_CONTROL_ACTION_ENABLE:
             case DYNAMIC_FORM_CONTROL_ACTION_VISIBLE:
+            case DYNAMIC_FORM_CONTROL_ACTION_VISIBLE_ENABLE:
                 return true;
             default:
                 return false;
@@ -36,7 +39,9 @@ export class RelationUtils {
             return rel.action === DYNAMIC_FORM_CONTROL_ACTION_DISABLE ||
                 rel.action === DYNAMIC_FORM_CONTROL_ACTION_ENABLE ||
                 rel.action === DYNAMIC_FORM_CONTROL_ACTION_HIDDEN ||
-                rel.action === DYNAMIC_FORM_CONTROL_ACTION_VISIBLE;
+                rel.action === DYNAMIC_FORM_CONTROL_ACTION_VISIBLE ||
+                rel.action === DYNAMIC_FORM_CONTROL_ACTION_HIDDEN_DISABLE ||
+                rel.action === DYNAMIC_FORM_CONTROL_ACTION_VISIBLE_ENABLE;
         });
 
         return rel !== undefined ? rel : null;
@@ -161,6 +166,13 @@ export class RelationUtils {
 
     static isFormControlToBeHidden(relGroup: DynamicFormControlRelationGroup, _formGroup: FormGroup): boolean {
         if (relGroup.action !== DYNAMIC_FORM_CONTROL_ACTION_HIDDEN && relGroup.action !== DYNAMIC_FORM_CONTROL_ACTION_VISIBLE) {
+            return false;
+        }
+        return RelationUtils.isActionTriggered(relGroup, _formGroup);
+    }
+
+    static isFormControlToBeHiddenAndDisabled(relGroup: DynamicFormControlRelationGroup, _formGroup: FormGroup): boolean {
+        if (relGroup.action !== DYNAMIC_FORM_CONTROL_ACTION_HIDDEN_DISABLE && relGroup.action !== DYNAMIC_FORM_CONTROL_ACTION_VISIBLE_ENABLE) {
             return false;
         }
         return RelationUtils.isActionTriggered(relGroup, _formGroup);
