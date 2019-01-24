@@ -66,50 +66,50 @@ export class RelationUtils {
     }
 
     /**
-     * Gets a child control in the specified control, or anywhere below the
-     * specified control's parent root.
+     * Gets a child control in the specified control, or in any of the
+     * control's parents.
      * @param id
      * @param controlToSearch
      */
-    static getControl(id: string, controlToSearch: AbstractControl) {
+    static getControl(id: string, controlToSearch: AbstractControl): FormControl | null | undefined {
         let control: FormControl | null | undefined = controlToSearch.get(id) as FormControl;
-        if (!control) {
-            control = RelationUtils.getControlBelowRoot(id, controlToSearch.root);
+        if (!control && controlToSearch.parent !== undefined) {
+            control = RelationUtils.getControl(id, controlToSearch.parent);
         }
         return control;
     }
 
-    /**
-     * Gets the control with the matching id from the specified root and its children.
-     * FormGroup.get will only find a control in the current group.
-     * @param id
-     * @param rootControl
-     */
-    static getControlBelowRoot(id: string, rootControl: AbstractControl): FormControl | null {
+    // /**
+    //  * Gets the control with the matching id from the specified root and its children.
+    //  * FormGroup.get will only find a control in the current group.
+    //  * @param id
+    //  * @param rootControl
+    //  */
+    // static getControlBelowRoot(id: string, rootControl: AbstractControl): FormControl | null {
 
-        if (!rootControl) {
-            return null;
-        }
+    //     if (!rootControl) {
+    //         return null;
+    //     }
 
-        const control = rootControl.get(id);
-        if (control) {
-            return (control instanceof FormControl) ? control : null;
-        }
+    //     const control = rootControl.get(id);
+    //     if (control) {
+    //         return (control instanceof FormControl) ? control : null;
+    //     }
 
-        if (rootControl instanceof FormGroup || rootControl instanceof FormArray) {
-            for (const key in rootControl.controls) {
-                const subControl = rootControl.get(key);
-                if (subControl instanceof FormGroup) {
-                    const childControl = RelationUtils.getControlBelowRoot(id, subControl);
-                    if (childControl) {
-                        return childControl;
-                    }
-                }
-            }
-        }
+    //     if (rootControl instanceof FormGroup || rootControl instanceof FormArray) {
+    //         for (const key in rootControl.controls) {
+    //             const subControl = rootControl.get(key);
+    //             if (subControl instanceof FormGroup) {
+    //                 const childControl = RelationUtils.getControlBelowRoot(id, subControl);
+    //                 if (childControl) {
+    //                     return childControl;
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        return null;
-    }
+    //     return null;
+    // }
 
     static isActionTriggered(relGroup: DynamicFormControlRelationGroup, _formGroup: FormGroup): boolean {
 
