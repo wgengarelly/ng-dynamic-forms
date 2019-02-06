@@ -3,12 +3,12 @@ import { DebugElement } from "@angular/core";
 import { ReactiveFormsModule, FormGroup, FormControl } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { By } from "@angular/platform-browser";
-import { Select } from "@ionic/angular";
+import { IonSelect } from "@ionic/angular";
 import { TextMaskModule } from "angular2-text-mask";
 import { DynamicFormsCoreModule, DynamicFormService, DynamicSelectModel } from "@ng-dynamic-forms/core";
 import { DynamicIonicSelectComponent } from "./dynamic-ionic-select.component";
 
-xdescribe("DynamicIonicSelectComponent test suite", () => {
+describe("DynamicIonicSelectComponent test suite", () => {
 
     let testModel = new DynamicSelectModel({id: "select", options: [{value: "One"}, {value: "Two"}], value: "One"}),
         formModel = [testModel],
@@ -26,7 +26,7 @@ xdescribe("DynamicIonicSelectComponent test suite", () => {
                 ReactiveFormsModule,
                 NoopAnimationsModule,
                 TextMaskModule,
-                DynamicFormsCoreModule.forRoot()
+                DynamicFormsCoreModule
             ],
             declarations: [DynamicIonicSelectComponent]
 
@@ -53,11 +53,10 @@ xdescribe("DynamicIonicSelectComponent test suite", () => {
 
     it("should initialize correctly", () => {
 
-        expect(component.bindId).toBe(true);
         expect(component.control instanceof FormControl).toBe(true);
         expect(component.group instanceof FormGroup).toBe(true);
         expect(component.model instanceof DynamicSelectModel).toBe(true);
-        expect(component.ionSelect instanceof Select).toBe(true);
+        expect(component.ionSelect instanceof IonSelect).toBe(true);
 
         expect(component.blur).toBeDefined();
         expect(component.change).toBeDefined();

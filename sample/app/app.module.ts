@@ -1,17 +1,16 @@
 import { NgModule } from "@angular/core";
-import { Http, BaseRequestOptions } from "@angular/http";
+import { BaseRequestOptions, Http } from "@angular/http";
 import { HttpClientModule } from "@angular/common/http";
 import { MAT_CHIPS_DEFAULT_OPTIONS, MatCardModule, MatNativeDateModule } from "@angular/material";
 import { MockBackend } from "@angular/http/testing";
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { LocationStrategy, HashLocationStrategy } from "@angular/common";
-import { ReactiveFormsModule, NG_VALIDATORS, NG_ASYNC_VALIDATORS } from "@angular/forms";
+import { HashLocationStrategy, LocationStrategy } from "@angular/common";
+import { NG_ASYNC_VALIDATORS, NG_VALIDATORS, ReactiveFormsModule } from "@angular/forms";
 import { NgbDatepickerModule, NgbRatingModule, NgbTimepickerModule } from "@ng-bootstrap/ng-bootstrap";
-import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
-import { TimepickerModule } from "ngx-bootstrap/timepicker";
+import { BsDatepickerModule, TimepickerModule } from "ngx-bootstrap";
 
-import { DynamicFormsCoreModule, DYNAMIC_VALIDATORS, Validator, ValidatorFactory } from "@ng-dynamic-forms/core";
+import { DYNAMIC_VALIDATORS, DynamicFormsCoreModule, Validator, ValidatorFactory } from "@ng-dynamic-forms/core";
 import { DynamicFormsBasicUIModule } from "@ng-dynamic-forms/ui-basic";
 import { DynamicFormsBootstrapUIModule } from "@ng-dynamic-forms/ui-bootstrap";
 import { DynamicFormsFoundationUIModule } from "@ng-dynamic-forms/ui-foundation";
@@ -32,10 +31,10 @@ import { ValidationMessageComponent } from "./validation-message/validation-mess
 import { AppRoutingModule } from './app.routing.module';
 import { AppComponent } from './app.component';
 import {
-    customValidator,
+    customAsyncFormGroupValidator,
     customDateRangeValidator,
     customForbiddenValidator,
-    customAsyncFormGroupValidator
+    customValidator
 } from "./app.validators";
 
 export function mockBackendFactory(mockBackend: MockBackend, baseRequestOptions: BaseRequestOptions) {
@@ -57,7 +56,7 @@ export function mockBackendFactory(mockBackend: MockBackend, baseRequestOptions:
         NgbDatepickerModule,
         NgbRatingModule,
         NgbTimepickerModule,
-        DynamicFormsCoreModule,
+        DynamicFormsCoreModule.forRoot(),
         DynamicFormsBasicUIModule,
         DynamicFormsBootstrapUIModule,
         DynamicFormsFoundationUIModule,

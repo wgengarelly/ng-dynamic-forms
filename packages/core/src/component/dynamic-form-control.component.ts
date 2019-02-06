@@ -1,5 +1,5 @@
 import { EventEmitter } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup } from "@angular/forms";
 import { DynamicFormControl } from "./dynamic-form-control.interface";
 import { DynamicFormControlCustomEvent } from "./dynamic-form-control.event";
 import { DynamicFormControlModel } from "../model/dynamic-form-control.model";
@@ -21,7 +21,6 @@ export abstract class DynamicFormControlComponent implements DynamicFormControl 
 
     private _hasFocus: boolean = false;
 
-    bindId: boolean;
     group: FormGroup;
     layout: DynamicFormLayout;
     model: DynamicFormControlModel;
@@ -35,8 +34,19 @@ export abstract class DynamicFormControlComponent implements DynamicFormControl 
     protected constructor(protected layoutService: DynamicFormLayoutService,
                           protected validationService: DynamicFormValidationService) {}
 
-    get control(): FormControl {
-        return this.group.get(this.model.id) as FormControl;
+    get control(): AbstractControl | never {
+
+        const control = this.group.get(this.model.id);
+
+        if (control === null) {
+            throw new Error(`form group does not contain an abstract control with id ${this.model.id}`);
+        }
+
+        return control as AbstractControl;
+    }
+
+    get elementId(): string {
+        return this.layoutService.getElementId(this.model);
     }
 
     get errorMessages(): string[] {

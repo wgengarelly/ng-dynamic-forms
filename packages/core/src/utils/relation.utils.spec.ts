@@ -5,8 +5,13 @@ import { DynamicFormValidationService } from "../service/dynamic-form-validation
 import { DynamicRadioGroupModel } from "../model/radio/dynamic-radio-group.model";
 import { DynamicSelectModel } from "../model/select/dynamic-select.model";
 import { DynamicTextAreaModel } from "../model/textarea/dynamic-textarea.model";
-import { RelationUtils } from "./relation.utils";
-import {} from "jasmine";
+import {
+    findActivationRelations,
+    getRelatedFormControls,
+    isFormControlToBeDisabled,
+    isFormControlToBeRequired,
+    findRequiredRelation
+} from "./relation.utils";
 
 describe("Relation utils test suite", () => {
 
@@ -81,6 +86,48 @@ describe("Relation utils test suite", () => {
                     value: "option-3"
                 }
             ]
+        },
+        rel6 = {
+            action: "REQUIRED",
+            connective: "OR",
+            when: [
+                {
+                    id: "testSelect",
+                    value: "option-2"
+                },
+                {
+                    id: "testRadioGroup",
+                    value: "option-3"
+                }
+            ]
+        },
+        rel7 = {
+            action: "REQUIRED",
+            connective: "AND",
+            when: [
+                {
+                    id: "testSelect",
+                    value: "option-2"
+                },
+                {
+                    id: "testRadioGroup",
+                    value: "option-3"
+                }
+            ]
+        },
+        rel8 = {
+            action: "REQUIRED",
+            connective: "OR",
+            when: [
+                {
+                    id: "testSelect",
+                    value: "option-1"
+                },
+                {
+                    id: "testRadioGroup",
+                    value: "option-3"
+                }
+            ]
         };
 
     beforeEach(() => {
@@ -116,13 +163,13 @@ describe("Relation utils test suite", () => {
     it("should find an activation relation correctly", () => {
 
         model.relation = [rel1];
-        const firstResult = RelationUtils.findActivationRelations(model.relation);
+        const firstResult = findActivationRelations(model.relation);
         expect(firstResult).not.toBeNull();
         expect(firstResult !== null ? firstResult.length : 0).toBe(1);
         expect(firstResult !== null ? firstResult[0] : null).toBe(rel1);
 
         model.relation = [rel2];
-        const secondResult = RelationUtils.findActivationRelations(model.relation);
+        const secondResult = findActivationRelations(model.relation);
         expect(secondResult).not.toBeNull();
         expect(secondResult !== null ? secondResult.length : 0).toBe(1);
         expect(secondResult !== null ? secondResult[0] : null).toBe(rel2);
@@ -132,7 +179,7 @@ describe("Relation utils test suite", () => {
 
         model.relation = [rel2];
 
-        expect(RelationUtils.getRelatedFormControls(model, controlGroup).length).toBe(2);
+        expect(getRelatedFormControls(model, controlGroup).length).toBe(2);
     });
 
     it("should throw when model depends on itself", () => {
@@ -147,28 +194,50 @@ describe("Relation utils test suite", () => {
             ]
         }];
 
-        expect(() => RelationUtils.getRelatedFormControls(model, controlGroup))
+        expect(() => getRelatedFormControls(model, controlGroup))
             .toThrow(new Error(`FormControl ${model.id} cannot depend on itself`));
     });
 
     it("should check if form control is to be disabled correctly", () => {
 
         model.relation = [rel1];
-        expect(RelationUtils.isFormControlToBeDisabled(model.relation[0], controlGroup)).toBe(false);
+        expect(isFormControlToBeDisabled(model.relation[0], controlGroup)).toBe(false);
 
         model.relation = [rel2];
-        expect(RelationUtils.isFormControlToBeDisabled(model.relation[0], controlGroup)).toBe(true);
+        expect(isFormControlToBeDisabled(model.relation[0], controlGroup)).toBe(true);
 
         model.relation = [rel3];
-        expect(RelationUtils.isFormControlToBeDisabled(model.relation[0], controlGroup)).toBe(false);
+        expect(isFormControlToBeDisabled(model.relation[0], controlGroup)).toBe(false);
 
         model.relation = [rel4];
-        expect(RelationUtils.isFormControlToBeDisabled(model.relation[0], controlGroup)).toBe(false);
+        expect(isFormControlToBeDisabled(model.relation[0], controlGroup)).toBe(false);
 
         model.relation = [rel5];
-        expect(RelationUtils.isFormControlToBeDisabled(model.relation[0], controlGroup)).toBe(true);
+        expect(isFormControlToBeDisabled(model.relation[0], controlGroup)).toBe(true);
 
         model.relation = [{action: "TEST", when: [{id: "testTextArea", value: "test"}]}];
-        expect(RelationUtils.isFormControlToBeDisabled(model.relation[0], controlGroup)).toBe(false);
+        expect(isFormControlToBeDisabled(model.relation[0], controlGroup)).toBe(false);
+    });
+
+    it("should find a required relation correctly", () => {
+
+        model.relation = [rel6];
+        expect(findRequiredRelation(model.relation)).toBe(rel6);
+
+    });
+
+    it("should check if form control is to be required correctly", () => {
+
+        model.relation = [rel6];
+        expect(isFormControlToBeRequired(model.relation[0], controlGroup)).toBe(false);
+
+        model.relation = [rel7];
+        expect(isFormControlToBeRequired(model.relation[0], controlGroup)).toBe(false);
+
+        model.relation = [rel8];
+        expect(isFormControlToBeRequired(model.relation[0], controlGroup)).toBe(true);
+
+        model.relation = [{action: "TEST", when: [{id: "testTextArea", value: "test"}]}];
+        expect(isFormControlToBeRequired(model.relation[0], controlGroup)).toBe(false);
     });
 });

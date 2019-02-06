@@ -12,15 +12,6 @@ import {
 } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import {
-    DynamicFormArrayGroupModel,
-    DynamicFormControl,
-    DynamicFormControlContainerComponent,
-    DynamicFormControlEvent,
-    DynamicFormControlModel,
-    DynamicFormLayout,
-    DynamicFormLayoutService,
-    DynamicFormValidationService,
-    DynamicTemplateDirective,
     DYNAMIC_FORM_CONTROL_TYPE_ARRAY,
     DYNAMIC_FORM_CONTROL_TYPE_CHECKBOX,
     DYNAMIC_FORM_CONTROL_TYPE_CHECKBOX_GROUP,
@@ -28,9 +19,20 @@ import {
     DYNAMIC_FORM_CONTROL_TYPE_GROUP,
     DYNAMIC_FORM_CONTROL_TYPE_INPUT,
     DYNAMIC_FORM_CONTROL_TYPE_RADIO_GROUP,
+    DYNAMIC_FORM_CONTROL_TYPE_RATING,
     DYNAMIC_FORM_CONTROL_TYPE_SELECT,
     DYNAMIC_FORM_CONTROL_TYPE_TEXTAREA,
     DYNAMIC_FORM_CONTROL_TYPE_TIMEPICKER,
+    DynamicFormArrayGroupModel,
+    DynamicFormControl,
+    DynamicFormControlContainerComponent,
+    DynamicFormControlEvent,
+    DynamicFormControlModel,
+    DynamicFormInstancesService,
+    DynamicFormLayout,
+    DynamicFormLayoutService,
+    DynamicFormValidationService,
+    DynamicTemplateDirective
 } from "@ng-dynamic-forms/core";
 import { DynamicBootstrapCheckboxComponent } from "./checkbox/dynamic-bootstrap-checkbox.component";
 import { DynamicBootstrapDatePickerComponent } from "./datepicker/dynamic-bootstrap-datepicker.component";
@@ -38,6 +40,7 @@ import { DynamicBootstrapFormArrayComponent } from "./form-array/dynamic-bootstr
 import { DynamicBootstrapFormGroupComponent } from "./form-group/dynamic-bootstrap-form-group.component";
 import { DynamicBootstrapInputComponent } from "./input/dynamic-bootstrap-input.component";
 import { DynamicBootstrapRadioGroupComponent } from "./radio-group/dynamic-bootstrap-radio-group.component";
+import { DynamicBootstrapRatingComponent } from "./rating/dynamic-bootstrap-rating.component";
 import { DynamicBootstrapSelectComponent } from "./select/dynamic-bootstrap-select.component";
 import { DynamicBootstrapTextAreaComponent } from "./textarea/dynamic-bootstrap-textarea.component";
 import { DynamicBootstrapTimePickerComponent } from "./timepicker/dynamic-bootstrap-timepicker.component";
@@ -52,7 +55,6 @@ export class DynamicBootstrapFormControlContainerComponent extends DynamicFormCo
     @Input("templates") inputTemplateList: QueryList<DynamicTemplateDirective> | undefined;
 
     @Input() asBootstrapFormGroup: boolean = true;
-    @Input() bindId: boolean = true;
     @Input() context: DynamicFormArrayGroupModel | null = null;
     @Input() group: FormGroup;
     @Input() layout: DynamicFormLayout;
@@ -71,9 +73,10 @@ export class DynamicBootstrapFormControlContainerComponent extends DynamicFormCo
 
     constructor(protected componentFactoryResolver: ComponentFactoryResolver,
                 protected layoutService: DynamicFormLayoutService,
-                protected validationService: DynamicFormValidationService) {
+                protected validationService: DynamicFormValidationService,
+                protected dynamicFormInstancesService: DynamicFormInstancesService) {
 
-        super(componentFactoryResolver, layoutService, validationService);
+        super(componentFactoryResolver, layoutService, validationService, dynamicFormInstancesService);
     }
 }
 
@@ -101,6 +104,9 @@ export function bootstrapUIFormControlMapFn(model: DynamicFormControlModel): Typ
 
         case DYNAMIC_FORM_CONTROL_TYPE_RADIO_GROUP:
             return DynamicBootstrapRadioGroupComponent;
+
+        case DYNAMIC_FORM_CONTROL_TYPE_RATING:
+            return DynamicBootstrapRatingComponent;
 
         case DYNAMIC_FORM_CONTROL_TYPE_SELECT:
             return DynamicBootstrapSelectComponent;

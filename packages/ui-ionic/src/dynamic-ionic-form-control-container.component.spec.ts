@@ -23,12 +23,14 @@ import {
     DynamicSliderModel,
     DynamicSwitchModel,
     DynamicTextAreaModel,
-    DynamicTimePickerModel, DynamicFormsCoreModule
+    DynamicTimePickerModel,
+    DynamicFormService,
+    DynamicFormsCoreModule
 } from "@ng-dynamic-forms/core";
 import { DynamicIonicFormControlContainerComponent } from "./dynamic-ionic-form-control-container.component";
 import { DynamicIonicInputComponent } from "./input/dynamic-ionic-input.component";
 
-xdescribe("DynamicIonicFormControlContainerComponent test suite", () => {
+describe("DynamicIonicFormControlContainerComponent test suite", () => {
 
     let formModel = [
             new DynamicCheckboxModel({id: "checkbox"}),
@@ -71,7 +73,7 @@ xdescribe("DynamicIonicFormControlContainerComponent test suite", () => {
                 NoopAnimationsModule,
                 TextMaskModule,
                 IonicModule,
-                DynamicFormsCoreModule.forRoot()
+                DynamicFormsCoreModule
             ],
             declarations: [DynamicIonicFormControlContainerComponent, DynamicIonicInputComponent]
 
@@ -98,7 +100,6 @@ xdescribe("DynamicIonicFormControlContainerComponent test suite", () => {
 
     it("should initialize correctly", () => {
 
-        expect(component.bindId).toBe(true);
         expect(component.context).toBeNull();
         expect(component.control instanceof FormControl).toBe(true);
         expect(component.group instanceof FormGroup).toBe(true);
@@ -168,5 +169,14 @@ xdescribe("DynamicIonicFormControlContainerComponent test suite", () => {
         testModel.disabledUpdates.next(true);
 
         expect(component.onModelDisabledUpdates).toHaveBeenCalled();
+    });
+
+    it("should update control activation when model required property changes", () => {
+
+        spyOn(component, "onModelRequiredUpdates");
+
+        testModel.requiredUpdates.next(true);
+
+        expect(component.onModelRequiredUpdates).toHaveBeenCalled();
     });
 });

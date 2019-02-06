@@ -90,7 +90,7 @@ describe("DynamicKendoFormControlContainerComponent test suite", () => {
                 DropDownsModule,
                 InputsModule,
                 UploadModule,
-                DynamicFormsCoreModule.forRoot()
+                DynamicFormsCoreModule
             ],
             declarations: [DynamicKendoFormControlContainerComponent, DynamicKendoDropdownListComponent]
 
@@ -123,7 +123,6 @@ describe("DynamicKendoFormControlContainerComponent test suite", () => {
 
     it("should initialize correctly", () => {
 
-        expect(component.bindId).toBe(true);
         expect(component.context).toBeNull();
         expect(component.control instanceof FormControl).toBe(true);
         expect(component.group instanceof FormGroup).toBe(true);
@@ -188,6 +187,15 @@ describe("DynamicKendoFormControlContainerComponent test suite", () => {
         testModel.disabledUpdates.next(true);
 
         expect(component.onModelDisabledUpdates).toHaveBeenCalled();
+    });
+
+    it("should update control activation when model required property changes", () => {
+
+        spyOn(component, "onModelRequiredUpdates");
+
+        testModel.requiredUpdates.next(true);
+
+        expect(component.onModelRequiredUpdates).toHaveBeenCalled();
     });
 
     it("should map a form control model to a form control component", () => {

@@ -28,11 +28,13 @@ import {
     DynamicFormControlContainerComponent,
     DynamicFormControlEvent,
     DynamicFormControlModel,
+    DynamicFormInstancesService,
     DynamicFormLayout,
     DynamicFormLayoutService,
     DynamicFormValidationService,
     DynamicInputModel,
     DynamicTemplateDirective,
+    DynamicFormValueControlModel,
 } from "@ng-dynamic-forms/core";
 import { DynamicMaterialDatePickerComponent } from "./datepicker/dynamic-material-datepicker.component";
 import { DynamicMaterialInputComponent } from "./input/dynamic-material-input.component";
@@ -55,7 +57,6 @@ export class DynamicMaterialFormControlContainerComponent extends DynamicFormCon
     @ContentChildren(DynamicTemplateDirective) contentTemplateList: QueryList<DynamicTemplateDirective>;
     @Input("templates") inputTemplateList: QueryList<DynamicTemplateDirective>;
 
-    @Input() bindId: boolean = true;
     @Input() context: DynamicFormArrayGroupModel | null = null;
     @Input() group: FormGroup;
     @Input() layout: DynamicFormLayout;
@@ -70,9 +71,10 @@ export class DynamicMaterialFormControlContainerComponent extends DynamicFormCon
 
     constructor(protected componentFactoryResolver: ComponentFactoryResolver,
                 protected layoutService: DynamicFormLayoutService,
-                protected validationService: DynamicFormValidationService,) {
+                protected validationService: DynamicFormValidationService,
+                protected dynamicFormInstancesService: DynamicFormInstancesService) {
 
-        super(componentFactoryResolver, layoutService, validationService);
+        super(componentFactoryResolver, layoutService, validationService, dynamicFormInstancesService);
     }
 
     get componentType(): Type<DynamicFormControl> | null {
@@ -84,7 +86,10 @@ export class DynamicMaterialFormControlContainerComponent extends DynamicFormCon
         let matFormFieldTypes = [DYNAMIC_FORM_CONTROL_TYPE_DATEPICKER, DYNAMIC_FORM_CONTROL_TYPE_INPUT,
             DYNAMIC_FORM_CONTROL_TYPE_SELECT, DYNAMIC_FORM_CONTROL_TYPE_TEXTAREA];
 
-        return matFormFieldTypes.some(type => this.model.type === type);
+        return matFormFieldTypes.some(type => this.model.type === type) || (
+            this.model instanceof DynamicFormValueControlModel &&
+            this.model.getAdditional("isFormFieldControl")
+        );
     }
 }
 

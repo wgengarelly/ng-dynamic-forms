@@ -14,6 +14,7 @@ export * from "./directive/dynamic-list.directive";
 export * from "./directive/dynamic-template.directive";
 
 export * from "./model/dynamic-form-control.model";
+export * from "./model/dynamic-form.model";
 export * from "./model/dynamic-form-value-control.model";
 export * from "./model/dynamic-check-control.model";
 export * from "./model/dynamic-date-control.model";
@@ -46,6 +47,9 @@ export * from "./model/misc/dynamic-form-control-validation.model";
 export * from "./service/dynamic-form.service";
 export * from "./service/dynamic-form-layout.service";
 export * from "./service/dynamic-form-validation.service";
+export * from "./service/dynamic-form-instances.service";
+
+export * from "./service/dynamic-form.validators";
 
 export * from "./utils/autofill.utils";
 export * from "./utils/core.utils";

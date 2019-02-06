@@ -4,9 +4,11 @@
                [innerHTML]="model.label"
                [ngClass]="[getClass('element', 'label'), getClass('grid', 'label')]"></ion-label>
 
-    <ion-toggle [checked]="model.checked"
-                [dynamicId]="bindId && model.id"
+    <ion-toggle #ionToggle
+                [checked]="model.checked"
+                [color]="model.getAdditional('color', undefined)"
                 [formControlName]="model.id"
+                [id]="elementId"
                 [ngClass]="getClass('element', 'control')"
                 (ionBlur)="onBlur($event)"
                 (ionChange)="onChange($event)"

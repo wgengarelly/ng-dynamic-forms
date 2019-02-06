@@ -4,11 +4,11 @@ import { ReactiveFormsModule, FormGroup, FormControl } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { By } from "@angular/platform-browser";
 import { TextMaskModule } from "angular2-text-mask";
-import { Datetime, IonicModule } from "@ionic/angular";
+import { IonDatetime, IonicModule } from "@ionic/angular";
 import { DynamicDatePickerModel, DynamicFormsCoreModule, DynamicFormService } from "@ng-dynamic-forms/core";
 import { DynamicIonicDateTimeComponent } from "./dynamic-ionic-datetime.component";
 
-xdescribe("DynamicIonicDateTimeComponent test suite", () => {
+describe("DynamicIonicDateTimeComponent test suite", () => {
 
     let testModel = new DynamicDatePickerModel({id: "datepicker"}),
         formModel = [testModel],
@@ -27,7 +27,7 @@ xdescribe("DynamicIonicDateTimeComponent test suite", () => {
                 NoopAnimationsModule,
                 TextMaskModule,
                 IonicModule,
-                DynamicFormsCoreModule.forRoot()
+                DynamicFormsCoreModule
             ],
             declarations: [DynamicIonicDateTimeComponent]
 
@@ -54,11 +54,10 @@ xdescribe("DynamicIonicDateTimeComponent test suite", () => {
 
     it("should initialize correctly", () => {
 
-        expect(component.bindId).toBe(true);
         expect(component.control instanceof FormControl).toBe(true);
         expect(component.group instanceof FormGroup).toBe(true);
         expect(component.model instanceof DynamicDatePickerModel).toBe(true);
-        expect(component.ionDatetime instanceof Datetime).toBe(true);
+        expect(component.ionDatetime instanceof IonDatetime).toBe(true);
 
         expect(component.blur).toBeDefined();
         expect(component.change).toBeDefined();
