@@ -34,7 +34,6 @@ function isActionPositive(action: string): boolean {
     case DYNAMIC_FORM_CONTROL_ACTION_ENABLE:
     case DYNAMIC_FORM_CONTROL_ACTION_VISIBLE:
     case DYNAMIC_FORM_CONTROL_ACTION_VISIBLE_ENABLE:
-    case DYNAMIC_FORM_CONTROL_ACTION_REQUIRED:
       return true;
     default:
       return false;
