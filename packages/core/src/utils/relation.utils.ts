@@ -46,7 +46,7 @@ function isActionPositive(action: string): boolean {
  * @param id
  * @param controlToSearch
  */
-function getControl(
+export function getControl(
   id: string,
   controlToSearch: AbstractControl
 ): FormControl | null | undefined {
