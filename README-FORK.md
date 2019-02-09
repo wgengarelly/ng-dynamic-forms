@@ -1,3 +1,107 @@
+# To Sync with Original
+
+https://help.github.com/articles/syncing-a-fork/
+
+1. git fetch upstream
+1. git checkout master
+1. git merge upstream/master
+1. Handle any conflicts
+1. git push
+
+# Build and Modify Version
+1. Build the packages. **You may need to run your console as administrator and/or close your dev editor to avoid npm unlinking problems.**
+    ```
+    npm run build:packages
+    ```
+1. Add the forked suffix to the versions and peer dependencies in the dist folder.
+(This is currently a manual task.)
+
+    For example in dist\@ng-dynamic-forms\core\package.json:
+    `"version": "6.2.0-forked.1"`
+
+    Or in dist\@ng-dynamic-forms\ui-material\package.json:
+    `"version": "6.2.0-forked.1"`
+    ...
+    `"@ng-dynamic-forms/core": "^6.2.0-forked.1",`
+
+# Publish to local npm (Verdaccio)
+Your can have a local npm registry in Verdaccio and run it in Docker with
+the following `docker.componse.yaml` file. I'm just running it in a local `DockerSandbox` folder.
+
+```
+version: '2.1'
+services:
+  verdaccio:
+    image: verdaccio/verdaccio
+    container_name: local-npm-verdaccio
+    ports:
+      - "4873:4873"
+    volumes:
+        - "./storage:/verdaccio/storage"
+        - "./conf:/verdaccio/conf"
+        - "./plugins:/verdaccio/plugins"
+volumes:
+  verdaccio:
+    driver: local
+```
+
+1. Start the `verdaccio/verdaccio` docker container.
+1. `cd` to the correct dist folder. For example:
+    ```
+    cd .\dist\@ng-dynamic-forms\core
+    ```
+1. Publish to the local container.
+    ```
+    npm publish --registry http://localhost:4873
+    ```
+
+# List of Overrides in the Fork:
+
+## packages > ui-material >> dynamic-material-form-input-control.component.ts
+- Changed `showCharacterHint` to hide hint unless character count is > 75% of the max length.
+
+## packages > ui-material >> dynamic-material-radio-group.component.html
+- Added `[color]` attribute to mat-radio-button.
+- Removed `[name]` from mat-radio-group.
+
+## packages > core >> utils > relation-compare-operators.utils.ts
+- Added this file to support additional relations
+
+## packages > core >> utils > relation.utils.ts
+- Significant changes to support HIDDEN / VISIBLE relations. See code below.
+
+#### Begin new core/src/model/misc/dynamic-form-control-relation.model.ts
+```
+export const DYNAMIC_FORM_CONTROL_ACTION_DISABLE = "DISABLE";
+export const DYNAMIC_FORM_CONTROL_ACTION_ENABLE = "ENABLE";
+export const DYNAMIC_FORM_CONTROL_ACTION_VISIBLE = "VISIBLE";
+export const DYNAMIC_FORM_CONTROL_ACTION_HIDDEN = "HIDDEN";
+export const DYNAMIC_FORM_CONTROL_ACTION_HIDDEN_DISABLE = "HIDDEN_DISABLE";
+export const DYNAMIC_FORM_CONTROL_ACTION_VISIBLE_ENABLE = "VISIBLE_ENABLE";
+export const DYNAMIC_FORM_CONTROL_ACTION_REQUIRED = "REQUIRED";
+
+export const DYNAMIC_FORM_CONTROL_CONNECTIVE_AND = "AND";
+export const DYNAMIC_FORM_CONTROL_CONNECTIVE_OR = "OR";
+
+export interface DynamicFormControlRelation {
+
+    id: string;
+    operator?: string;
+    status?: string;
+    value?: any;
+}
+
+export interface DynamicFormControlRelationGroup {
+
+    action: string;
+    connective?: string;
+    when: DynamicFormControlRelation[];
+}
+```
+#### End new core/src/service/dynamic-form-control-relation.model.ts
+
+#### Begin new core/src/utils/relation.utils.ts
+```
 import {
   FormGroup,
   FormControl,
@@ -34,6 +138,7 @@ function isActionPositive(action: string): boolean {
     case DYNAMIC_FORM_CONTROL_ACTION_ENABLE:
     case DYNAMIC_FORM_CONTROL_ACTION_VISIBLE:
     case DYNAMIC_FORM_CONTROL_ACTION_VISIBLE_ENABLE:
+    case DYNAMIC_FORM_CONTROL_ACTION_REQUIRED:
       return true;
     default:
       return false;
@@ -46,7 +151,7 @@ function isActionPositive(action: string): boolean {
  * @param id
  * @param controlToSearch
  */
-export function getControl(
+function getControl(
   id: string,
   controlToSearch: AbstractControl
 ): FormControl | null | undefined {
@@ -232,3 +337,5 @@ export function isFormControlToBeRequired(
   }
   return isActionTriggered(relGroup, _formGroup);
 }
+```
+#### End new core/src/utils/relation.utils.ts

@@ -6,22 +6,59 @@ import {
     DynamicRadioGroupModel,
     DynamicSelectModel,
     DynamicSwitchModel,
-    DynamicTextAreaModel
+    DynamicTextAreaModel,
+    DynamicFormArrayModel
 } from "@ng-dynamic-forms/core";
 import { BehaviorSubject } from "rxjs";
 
 export const STATES_AUTOCOMPLETE_LIST = [
-    'Alabama', 'Alaska', 'American Samoa', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware',
-    'District of Columbia', 'Federated States of Micronesia', 'Florida', 'Georgia', 'Guam', 'Hawaii', 'Idaho',
-    'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Marshall Islands', 'Maryland',
-    'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada',
-    'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
-    'Northern Mariana Islands', 'Ohio', 'Oklahoma', 'Oregon', 'Palau', 'Pennsylvania', 'Puerto Rico', 'Rhode Island',
-    'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virgin Island', 'Virginia',
-    'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+    "Alabama", "Alaska", "American Samoa", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware",
+    "District of Columbia", "Federated States of Micronesia", "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+    "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Marshall Islands", "Maryland",
+    "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+    "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota",
+    "Northern Mariana Islands", "Ohio", "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico", "Rhode Island",
+    "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+    "Washington", "West Virginia", "Wisconsin", "Wyoming"
 ];
 
 export const MATERIAL_SAMPLE_FORM_MODEL = [
+
+    new DynamicCheckboxModel({
+        id: "dynamicStuff",
+        label: "Dynamic Stuff",
+        additional: {
+            color: "primary"
+        }
+    }),
+
+    new DynamicFormArrayModel({
+        id: "sampleArray",
+        initialCount: 3,
+        groupFactory: () => [
+            new DynamicRadioGroupModel<string>({
+                id: "duck",
+                additional: {
+                    color: "primary"
+                },
+                options: [
+                    {
+                        label: "Huey",
+                        value: "huey"
+                    },
+                    {
+                        label: "Dewey",
+                        value: "dewey"
+                    },
+                    {
+                        label: "Louie",
+                        value: "louie"
+                    }
+                ],
+                value: "cc"
+            })
+        ]
+    }),
 
     new DynamicFormGroupModel({
 
@@ -82,7 +119,7 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
             }),
 
             new DynamicInputModel({
-
+                hidden: true,
                 id: "roomQuantity",
                 inputType: "number",
                 placeholder: "Room Quantity",
@@ -103,7 +140,19 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
         },
         errorMessages: {
             required: "Field is required"
-        }
+        },
+        relation: [
+            {
+                action: "DISABLE",
+                when: [
+                    {
+                        id: "dynamicStuff",
+                        operator: "===",
+                        value: true
+                    }
+                ]
+            }
+        ]
     }),
 
     new DynamicInputModel({
@@ -119,19 +168,44 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
         },
         additional: {
             color: "accent"
-        }
+        },
+        relation: [
+            {
+                action: "DISABLE",
+                when: [
+                    {
+                        id: "dynamicStuff",
+                        operator: "===",
+                        value: false
+                    }
+                ]
+            }
+        ]
     }),
 
     new DynamicInputModel({
 
         id: "email",
         placeholder: "E-Mail",
+        hidden: true,
         validators: {
             email: null
         },
         errorMessages: {
             email: "Field has no valid email"
-        }
+        },
+        relation: [
+            {
+                action: "HIDDEN",
+                when: [
+                    {
+                        id: "dynamicStuff",
+                        operator: "===",
+                        value: true
+                    }
+                ]
+            }
+        ]
     }),
 
     new DynamicInputModel({
@@ -146,7 +220,19 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
         },
         errorMessages: {
             required: "Field is required"
-        }
+        },
+        relation: [
+            {
+                action: "VISIBLE",
+                when: [
+                    {
+                        id: "dynamicStuff",
+                        operator: "===",
+                        value: true
+                    }
+                ]
+            }
+        ]
     }),
 
     new DynamicFormGroupModel({
@@ -224,6 +310,9 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
     new DynamicRadioGroupModel<string>({
 
         id: "payment",
+        additional: {
+            color: "primary"
+        },
         options: [
             {
                 label: "Credit Card",
@@ -249,6 +338,7 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
 
         id: "note",
         rows: 3,
+        maxLength: 100,
         placeholder: "Personal Note",
         relation: [
             {
@@ -269,7 +359,7 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
                     }
                 ]
             }
-        ],
+        ]
     }),
 
     new DynamicInputModel({
@@ -285,8 +375,10 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
         id: "reminder",
         offLabel: "Send me a reminder",
         onLabel: "Send me a reminder",
-        value: false
-
+        value: false,
+        additional: {
+            color: "primary"
+        }
     }),
 
     new DynamicSwitchModel({
@@ -294,12 +386,17 @@ export const MATERIAL_SAMPLE_FORM_MODEL = [
         id: "newsletter",
         offLabel: "Subscribe to newsletter",
         onLabel: "Subscribe to newsletter",
-        value: true
+        value: true,
+        additional: {
+            color: "primary"
+        }
     }),
 
     new DynamicCheckboxModel({
-
         id: "confirm",
-        label: "I confirm the information given above"
+        label: "I confirm the information given above",
+        additional: {
+            color: "primary"
+        }
     })
 ];

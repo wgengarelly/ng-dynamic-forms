@@ -35,15 +35,26 @@ import {
     DynamicFormControlLayoutContext,
     DynamicFormControlLayoutPlace
 } from "../model/misc/dynamic-form-control-layout.model";
-import { DynamicFormControlRelationGroup } from "../model/misc/dynamic-form-control-relation.model";
+import {
+    DynamicFormControlRelationGroup,
+    DYNAMIC_FORM_CONTROL_ACTION_DISABLE,
+    DYNAMIC_FORM_CONTROL_ACTION_ENABLE,
+    DYNAMIC_FORM_CONTROL_ACTION_HIDDEN,
+    DYNAMIC_FORM_CONTROL_ACTION_VISIBLE,
+    DYNAMIC_FORM_CONTROL_ACTION_HIDDEN_DISABLE,
+    DYNAMIC_FORM_CONTROL_ACTION_VISIBLE_ENABLE,
+    DYNAMIC_FORM_CONTROL_ACTION_REQUIRED
+} from "../model/misc/dynamic-form-control-relation.model";
 import { DynamicTemplateDirective } from "../directive/dynamic-template.directive";
 import { DynamicFormLayout, DynamicFormLayoutService } from "../service/dynamic-form-layout.service";
 import { DynamicFormValidationService } from "../service/dynamic-form-validation.service";
 import {
-    findActivationRelation,
+    findActivationRelations,
+    findRequiredRelation,
     getRelatedFormControls,
     isFormControlToBeDisabled,
-    findRequiredRelation,
+    isFormControlToBeHidden,
+    isFormControlToBeHiddenAndDisabled,
     isFormControlToBeRequired
 } from "../utils/relation.utils";
 import { DynamicFormControl } from "./dynamic-form-control.interface";
@@ -255,34 +266,57 @@ export abstract class DynamicFormControlContainerComponent implements OnChanges,
     */
     protected setControlRelations(): void {
 
-        let relRequired = findRequiredRelation(this.model.relation);
-        let relActivation = findActivationRelation(this.model.relation);
-
-        if (relActivation !== null) {
-
-            let rel = relActivation as DynamicFormControlRelationGroup;
-
-            this.updateModelDisabled(rel);
-
-            getRelatedFormControls(this.model, this.group).forEach(control => {
-
-                this.subscriptions.push(control.valueChanges.subscribe(() => this.updateModelDisabled(rel)));
-                this.subscriptions.push(control.statusChanges.subscribe(() => this.updateModelDisabled(rel)));
-            });
+        const relActivations = findActivationRelations(this.model.relation);
+        if (relActivations === null) {
+            return;
         }
 
-        if (relRequired !== null) {
-
-            let rel = relRequired as DynamicFormControlRelationGroup;
-
-            this.updateModelRequired(rel);
-
-            getRelatedFormControls(this.model, this.group).forEach(control => {
-
-                this.subscriptions.push(control.valueChanges.subscribe(() => this.updateModelRequired(rel)));
-                this.subscriptions.push(control.statusChanges.subscribe(() => this.updateModelRequired(rel)));
-            });
+        const relatedControls = getRelatedFormControls(this.model, this.group);
+        if (relatedControls === null || relatedControls.length === 0) {
+            return;
         }
+
+        relActivations.forEach(relGroup => {
+
+            switch (relGroup.action) {
+                case DYNAMIC_FORM_CONTROL_ACTION_DISABLE:
+                case DYNAMIC_FORM_CONTROL_ACTION_ENABLE:
+                    this.updateModelDisabled(relGroup);
+                    relatedControls.forEach(control => {
+                        this.subscriptions.push(control.valueChanges.subscribe(() => this.updateModelDisabled(relGroup)));
+                        this.subscriptions.push(control.statusChanges.subscribe(() => this.updateModelDisabled(relGroup)));
+                    });
+                    break;
+
+                case DYNAMIC_FORM_CONTROL_ACTION_HIDDEN:
+                case DYNAMIC_FORM_CONTROL_ACTION_VISIBLE:
+                    this.updateModelHidden(relGroup);
+                    relatedControls.forEach(control => {
+                        this.subscriptions.push(control.valueChanges.subscribe(() => this.updateModelHidden(relGroup)));
+                        this.subscriptions.push(control.statusChanges.subscribe(() => this.updateModelHidden(relGroup)));
+                    });
+                    break;
+
+                case DYNAMIC_FORM_CONTROL_ACTION_HIDDEN_DISABLE:
+                case DYNAMIC_FORM_CONTROL_ACTION_VISIBLE_ENABLE:
+                    this.updateModelHiddenAndDisabled(relGroup);
+                    relatedControls.forEach(control => {
+                        this.subscriptions.push(control.valueChanges.subscribe(() => this.updateModelHiddenAndDisabled(relGroup)));
+                        this.subscriptions.push(control.statusChanges.subscribe(() => this.updateModelHiddenAndDisabled(relGroup)));
+                    });
+                    break;
+
+                case DYNAMIC_FORM_CONTROL_ACTION_REQUIRED:
+                    this.updateModelRequired(relGroup);
+                    relatedControls.forEach(control => {
+                        this.subscriptions.push(control.valueChanges.subscribe(() => this.updateModelRequired(relGroup)));
+                        this.subscriptions.push(control.statusChanges.subscribe(() => this.updateModelRequired(relGroup)));
+                    });
+
+            }
+
+        });
+
     }
 
     protected createDynamicFormControlEvent($event: any, type: string): DynamicFormControlEvent {
@@ -290,13 +324,22 @@ export abstract class DynamicFormControlContainerComponent implements OnChanges,
     }
 
     updateModelDisabled(relation: DynamicFormControlRelationGroup): void {
-
         this.model.disabledUpdates.next(isFormControlToBeDisabled(relation, this.group));
     }
 
     updateModelRequired(relation: DynamicFormControlRelationGroup): void {
-
         this.model.requiredUpdates.next(isFormControlToBeRequired(relation, this.group));
+    }
+
+    updateModelHidden(relation: DynamicFormControlRelationGroup): void {
+        const isControlToBeHidden = isFormControlToBeHidden(relation, this.group);
+        this.model.hidden = isControlToBeHidden;
+    }
+
+    updateModelHiddenAndDisabled(relation: DynamicFormControlRelationGroup): void {
+        const isControlToBeHiddenAndDisabled = isFormControlToBeHiddenAndDisabled(relation, this.group);
+        this.model.disabledUpdates.next(isControlToBeHiddenAndDisabled);
+        this.model.hidden = isControlToBeHiddenAndDisabled;
     }
 
     unsubscribe(): void {

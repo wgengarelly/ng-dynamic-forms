@@ -14,12 +14,76 @@ import { of } from "rxjs/observable/of";
 
 export const BOOTSTRAP_SAMPLE_FORM_MODEL = [
 
+    new DynamicInputModel({
+        id: "dynamicStuff",
+        label: "Dynamic Stuff"
+    }),
+
+    new DynamicFormGroupModel({
+
+        id: "testGroup",
+        legend: "Test Group",
+        group: [
+
+            new DynamicInputModel({
+                id: "childItem",
+                label: "Child Item",
+                relation: [
+                    {
+                        action: "HIDDEN",
+                        when: [
+                            {
+                                id: "dynamicStuff",
+                                operator: "==",
+                                value: 1
+                            }
+                        ]
+                    }
+                ]
+            }),
+
+            new DynamicFormArrayModel({
+                id: "testArray",
+                initialCount: 3,
+                groupFactory: () => {
+                    return [
+
+                        new DynamicFormGroupModel({
+                            id: "arrayGroup",
+                            group: [
+                                new DynamicInputModel({
+                                    id: "arrayChild",
+                                    label: "Array Child"
+                                }),
+                                new DynamicInputModel({
+                                    id: "arrayChildOptional",
+                                    label: "Array Child Optional",
+                                    relation: [
+                                        {
+                                            action: "VISIBLE",
+                                            when: [
+                                                {
+                                                    id: "bootstrapSelect",
+                                                    value: "option-1"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                })
+                            ]
+                        })
+                    ];
+                }
+            })
+        ]
+
+    }),
+
     new DynamicFormGroupModel({
 
         id: "bsFormGroup1",
         legend: "Form Group 1",
         group: [
-
             new DynamicDatePickerModel({
 
                 id: "bsDatePicker",
@@ -58,7 +122,24 @@ export const BOOTSTRAP_SAMPLE_FORM_MODEL = [
             }),
 
             new DynamicInputModel({
-
+                relation: [
+                    {
+                        action: "VISIBLE",
+                        connective: "OR",
+                        when: [
+                            {
+                                id: "dynamicStuff",
+                                operator: ">",
+                                value: 3
+                            },
+                            {
+                                id: "bootstrapSelect",
+                                operator: "===",
+                                value: ["option-2", "option-4"]
+                            }
+                        ]
+                    }
+                ],
                 hint: "Just a sample help text",
                 id: "bsInput",
                 label: "Input",

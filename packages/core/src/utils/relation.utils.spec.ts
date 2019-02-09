@@ -6,7 +6,7 @@ import { DynamicRadioGroupModel } from "../model/radio/dynamic-radio-group.model
 import { DynamicSelectModel } from "../model/select/dynamic-select.model";
 import { DynamicTextAreaModel } from "../model/textarea/dynamic-textarea.model";
 import {
-    findActivationRelation,
+    findActivationRelations,
     getRelatedFormControls,
     isFormControlToBeDisabled,
     isFormControlToBeRequired,
@@ -85,7 +85,7 @@ describe("Relation utils test suite", () => {
                     id: "testRadioGroup",
                     value: "option-3"
                 }
-            ]            
+            ]
         },
         rel6 = {
             action: "REQUIRED",
@@ -127,7 +127,7 @@ describe("Relation utils test suite", () => {
                     id: "testRadioGroup",
                     value: "option-3"
                 }
-            ]                 
+            ]
         };
 
     beforeEach(() => {
@@ -163,10 +163,16 @@ describe("Relation utils test suite", () => {
     it("should find an activation relation correctly", () => {
 
         model.relation = [rel1];
-        expect(findActivationRelation(model.relation)).toBe(rel1);
+        const firstResult = findActivationRelations(model.relation);
+        expect(firstResult).not.toBeNull();
+        expect(firstResult !== null ? firstResult.length : 0).toBe(1);
+        expect(firstResult !== null ? firstResult[0] : null).toBe(rel1);
 
         model.relation = [rel2];
-        expect(findActivationRelation(model.relation)).toBe(rel2);
+        const secondResult = findActivationRelations(model.relation);
+        expect(secondResult).not.toBeNull();
+        expect(secondResult !== null ? secondResult.length : 0).toBe(1);
+        expect(secondResult !== null ? secondResult[0] : null).toBe(rel2);
     });
 
     it("should get all related form controls correctly", () => {
