@@ -140,5 +140,17 @@ export const COMPARE_OPERATOR: { [index:string] : { (a: any, b: any): boolean} }
 
         //Use standard operator for all other values
         return a <= b;
+    },
+    "exists": function (a: any, _: any): boolean {
+        if (Array.isArray(a)) {
+            return a.length > 0;
+        }
+        return a !== undefined && a !== null;
+    },
+    "not-exists": function (a: any, _: any): boolean {
+        if (Array.isArray(a)) {
+            return a.length === 0;
+        }
+        return a === undefined || a === null;
     }
 };
